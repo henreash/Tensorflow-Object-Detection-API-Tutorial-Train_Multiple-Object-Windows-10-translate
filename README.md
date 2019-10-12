@@ -177,41 +177,41 @@ protoc --python_out=. .\object_detection\protos\anchor_generator.proto .\object_
 ```
 
 #### 2g. 测试TensorFlow安装确保正常运行
-The TensorFlow Object Detection API is now all set up to use pre-trained models for object detection, or to train a new one. You can test it out and verify your installation is working by launching the object_detection_tutorial.ipynb script with Jupyter. From the \object_detection directory, issue this command:
+现在TensorFlow对象检测API已经配置完毕，可以用来迁移训练对象检测模型或训练全新的模型。在Jupyter中启动object_detection_tutorial.ipynb可以测试安装环境是否正确，并进行修正。在\object_detection目录，运行命令：
 ```
 (tensorflow1) C:\tensorflow1\models\research\object_detection> jupyter notebook object_detection_tutorial.ipynb
 ```
-This opens the script in your default web browser and allows you to step through the code one section at a time. You can step through each section by clicking the “Run” button in the upper toolbar. The section is done running when the “In [ * ]” text next to the section populates with a number (e.g. “In [1]”). 
+在默认浏览器中打开脚本，允许你逐段运行代码。点击上方的工具栏中的Run按钮可以从头开始运行各段代码。当段落前面的标记“In [ * ]”中的出现一个数字，（“In [1]”），说明这个段落执行完毕。
 
-(Note: part of the script downloads the ssd_mobilenet_v1 model from GitHub, which is about 74MB. This means it will take some time to complete the section, so be patient.)
+(注意: 有段代码要从GitHub上下载ssd_mobilenet_v1模型, 大约74MB. 这段执行需要一定的时间，需要耐心.)
 
-Once you have stepped all the way through the script, you should see two labeled images at the bottom section the page. If you see this, then everything is working properly! If not, the bottom section will report any errors encountered. See the [Appendix](https://github.com/EdjeElectronics/TensorFlow-Object-Detection-API-Tutorial-Train-Multiple-Objects-Windows-10#appendix-common-errors) for a list of errors I encountered while setting this up.
+执行完所有的代码后，在最后一段代码下方可以看到两个带有标签的图像。如果看到这两张图片说明一切Ok！如果没有，最下方的段落会显示出错误信息。见[Appendix](https://github.com/EdjeElectronics/TensorFlow-Object-Detection-API-Tutorial-Train-Multiple-Objects-Windows-10#appendix-common-errors) 罗列出了可能遇到的错误.
 
-**Note: If you run the full Jupyter Notebook without getting any errors, but the labeled pictures still don't appear, try this: go in to object_detection/utils/visualization_utils.py and comment out the import statements around lines 29 and 30 that include matplotlib. Then, try re-running the Jupyter notebook.**
+**注意: 如果运行了Jupyter Notebook中的全部代码，没有任何错误,但标签图片还是没有出现, 检查一下: 在object_detection/utils/visualization_utils.py注释掉第29和30行的导入matplotlib的语句。在重新运行Jupyter notebook.**
 
 <p align="center">
   <img src="doc/jupyter_notebook_dogs.jpg">
 </p>
 
-### 3. Gather and Label Pictures
-Now that the TensorFlow Object Detection API is all set up and ready to go, we need to provide the images it will use to train a new detection classifier.
+### 3. 收集和标记图像
+现在TensorFlow对象检测API已经配置完毕，我们需要为训练新的检测分类器准备图像.
 
-#### 3a. Gather Pictures
-TensorFlow needs hundreds of images of an object to train a good detection classifier. To train a robust classifier, the training images should have random objects in the image along with the desired objects, and should have a variety of backgrounds and lighting conditions. There should be some images where the desired object is partially obscured, overlapped with something else, or only halfway in the picture. 
+#### 3a. 收集图像
+TensorFlow需要为每个对象准备几百张图像，才能训练出好的检测分类器。要训练健壮的分类器，训练数据中需要有期望的对象，同时还要有随机的其他对象，而且还要有不同的背景和光照条件。有些图像中，目标物体要被部分遮挡，或只在图片中显示一部分。
 
-For my Pinochle Card Detection classifier, I have six different objects I want to detect (the card ranks nine, ten, jack, queen, king, and ace – I am not trying to detect suit, just rank). I used my iPhone to take about 40 pictures of each card on its own, with various other non-desired objects in the pictures. Then, I took about another 100 pictures with multiple cards in the picture. I know I want to be able to detect the cards when they’re overlapping, so I made sure to have the cards be overlapped in many images.
+在我的纸牌检测分类器中，有六种不同的对象要进行检测（纸牌9、10、J、Q、K、A--没有检测花色，值检测大小）。使用IPhone手机对每张纸牌拍摄40张图片，在图片中同时还有其他非期望的对象。另外，还有100张图片有多张纸牌。我希望在纸牌被部分遮挡时也要能够检测，因此故意在一些图像上遮挡了纸牌。
 
 <p align="center">
   <img src="doc/collage.jpg">
 </p>
 
-You can use your phone to take pictures of the objects or download images of the objects from Google Image Search. I recommend having at least 200 pictures overall. I used 311 pictures to train my card detector.
+可以使用手机拍摄图片或从Google上搜索图片。推荐至少要有200张图片。我使用311张图片训练纸牌检测器。
 
-Make sure the images aren’t too large. They should be less than 200KB each, and their resolution shouldn’t be more than 720x1280. The larger the images are, the longer it will take to train the classifier. You can use the resizer.py script in this repository to reduce the size of the images.
+确保图片不要太大。应该小于200KB，分辨率不高于720x1280。图像越大训练分类器时间越长。可以使用resize.py脚本缩小图片的尺寸。
 
-After you have all the pictures you need, move 20% of them to the \object_detection\images\test directory, and 80% of them to the \object_detection\images\train directory. Make sure there are a variety of pictures in both the \test and \train directories.
+处理完所有图片后，将20%的图片移动到\object_detection\images\test目录，80%的图片移动到\object_detection\images\train目录。确保在\test、\train目录中图片种类均匀分布。
 
-#### 3b. Label Pictures
+#### 3b. 标记图片
 Here comes the fun part! With all the pictures gathered, it’s time to label the desired objects in every picture. LabelImg is a great tool for labeling images, and its GitHub page has very clear instructions on how to install and use it.
 
 [LabelImg GitHub link](https://github.com/tzutalin/labelImg)
