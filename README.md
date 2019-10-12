@@ -212,6 +212,7 @@ TensorFlow需要为每个对象准备几百张图像，才能训练出好的检�
 处理完所有图片后，将20%的图片移动到\object_detection\images\test目录，80%的图片移动到\object_detection\images\train目录。确保在\test、\train目录中图片种类均匀分布。
 
 #### 3b. 标记图片
+这个部分很有趣！收集到所有图片后，就需要在每张图片上标记出目标对象了。LabelImg是标记图像的强大工具，其GitHub上
 Here comes the fun part! With all the pictures gathered, it’s time to label the desired objects in every picture. LabelImg is a great tool for labeling images, and its GitHub page has very clear instructions on how to install and use it.
 
 [LabelImg GitHub link](https://github.com/tzutalin/labelImg)
