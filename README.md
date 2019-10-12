@@ -155,22 +155,22 @@ A PYTHONPATH variable must be created that points to the \models, \models\resear
 (Note: Every time the "tensorflow1" virtual environment is exited, the PYTHONPATH variable is reset and needs to be set up again. You can use "echo %PYTHONPATH% to see if it has been set or not.)
 
 #### 2f. 编译Protobufs，运行setup.py
-Next, compile the Protobuf files, which are used by TensorFlow to configure model and training parameters. Unfortunately, the short protoc compilation command posted on TensorFlow’s Object Detection API [installation page](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md) does not work on Windows. Every  .proto file in the \object_detection\protos directory must be called out individually by the command.
+接下来，编译Protobuf文件，TensorFlow利用生成的代码配置模型和训练参数。不幸的是，TensorFlow对象检测API[installation page](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md)自带的编译命令protoc在windows上无法使用。\object_detection\protos目录下的所有.proto文件都必须单独使用命令行编译。
 
-In the Anaconda Command Prompt, change directories to the \models\research directory:
+在Anaconda命令行工具中，进入\models\research目录：
 ```
 (tensorflow1) C:\> cd C:\tensorflow1\models\research
 ```
 
-Then copy and paste the following command into the command line and press Enter:
+将下面的命令拷贝到命令行中，按回车:
 ```
 protoc --python_out=. .\object_detection\protos\anchor_generator.proto .\object_detection\protos\argmax_matcher.proto .\object_detection\protos\bipartite_matcher.proto .\object_detection\protos\box_coder.proto .\object_detection\protos\box_predictor.proto .\object_detection\protos\eval.proto .\object_detection\protos\faster_rcnn.proto .\object_detection\protos\faster_rcnn_box_coder.proto .\object_detection\protos\grid_anchor_generator.proto .\object_detection\protos\hyperparams.proto .\object_detection\protos\image_resizer.proto .\object_detection\protos\input_reader.proto .\object_detection\protos\losses.proto .\object_detection\protos\matcher.proto .\object_detection\protos\mean_stddev_box_coder.proto .\object_detection\protos\model.proto .\object_detection\protos\optimizer.proto .\object_detection\protos\pipeline.proto .\object_detection\protos\post_processing.proto .\object_detection\protos\preprocessor.proto .\object_detection\protos\region_similarity_calculator.proto .\object_detection\protos\square_box_coder.proto .\object_detection\protos\ssd.proto .\object_detection\protos\ssd_anchor_generator.proto .\object_detection\protos\string_int_label_map.proto .\object_detection\protos\train.proto .\object_detection\protos\keypoint_box_coder.proto .\object_detection\protos\multiscale_anchor_generator.proto .\object_detection\protos\graph_rewriter.proto .\object_detection\protos\calibration.proto .\object_detection\protos\flexible_grid_anchor_generator.proto
 ```
-This creates a name_pb2.py file from every name.proto file in the \object_detection\protos folder.
+将为\object_detection\protos目录下的每个.proto文件生成一个name_pb2.py文件。
 
-**(Note: TensorFlow occassionally adds new .proto files to the \protos folder. If you get an error saying ImportError: cannot import name 'something_something_pb2' , you may need to update the protoc command to include the new .proto files.)**
+**(注意: TensorFlow可能会在\protos目录下添加新的.proto文件。如果看到错误信息提示ImportError: cannot import name 'something_something_pb2' , 则需要修改protoc命令包含新的.proto文件.)**
 
-Finally, run the following commands from the C:\tensorflow1\models\research directory:
+最后，在命令C:\tensorflow1\models\research中运行如下命令:
 ```
 (tensorflow1) C:\tensorflow1\models\research> python setup.py build
 (tensorflow1) C:\tensorflow1\models\research> python setup.py install
