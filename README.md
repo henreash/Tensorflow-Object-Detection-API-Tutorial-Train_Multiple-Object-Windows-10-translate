@@ -113,26 +113,27 @@ You can choose which model to train your objection detection classifier on. If y
 现在，就可以从零开始训练自己的对象检测器了。本教程假设上面提到的所有文件都被删除，并讲解如何基于自己的训练数据生成这些文件。
 
 #### 2d. 设置新的Anaconda虚拟环境
-Next, we'll work on setting up a virtual environment in Anaconda for tensorflow-gpu. From the Start menu in Windows, search for the Anaconda Prompt utility, right click on it, and click “Run as Administrator”. If Windows asks you if you would like to allow it to make changes to your computer, click Yes.
+下一步，在Anaconda下为tensorflow-gpu配置虚拟环境。在windows开始菜单，找到Anaconda prompt工具，右键，点击“以管理员身份运行”。如果提示是否允许运行，点击Yes。
 
-In the command terminal that pops up, create a new virtual environment called “tensorflow1” by issuing the following command:
+在弹出的命令行终端，使用下面的命令，创建新的虚拟环境tensorflow1：
+
 ```
 C:\> conda create -n tensorflow1 pip python=3.5
 ```
-Then, activate the environment and update pip by issuing:
+然后激活环境（如果使用Windows PowerShell可能激活失败，需要安装一个三方包让Windows PowerShell支持conda命令。[详见](https://blog.csdn.net/qq_38163755/article/details/88144767))，升级pip:
 ```
 C:\> activate tensorflow1
 
 (tensorflow1) C:\>python -m pip install --upgrade pip
 ```
-Install tensorflow-gpu in this environment by issuing:
+在环境下安装tensorflow-gpu（安装1.5.0版本）:
 ```
 (tensorflow1) C:\> pip install --ignore-installed --upgrade tensorflow-gpu
 ```
 
-(Note: You can also use the CPU-only version of TensorFow, but it will run much slower. If you want to use the CPU-only version, just use "tensorflow" instead of "tensorflow-gpu" in the previous command.)
+(注意: 也可以安装只针对CPU的TensorFlow，但运行较慢。如果要使用CPU版本，在上面的命令行中使用tensorflow替代tensorflow-gpu.)
 
-Install the other necessary packages by issuing the following commands:
+使用如下命令安装其他必要的包:
 ```
 (tensorflow1) C:\> conda install -c anaconda protobuf
 (tensorflow1) C:\> pip install pillow
@@ -144,16 +145,16 @@ Install the other necessary packages by issuing the following commands:
 (tensorflow1) C:\> pip install pandas
 (tensorflow1) C:\> pip install opencv-python
 ```
-(Note: The ‘pandas’ and ‘opencv-python’ packages are not needed by TensorFlow, but they are used in the Python scripts to generate TFRecords and to work with images, videos, and webcam feeds.)
+(注意: Tensorflow不需要‘pandas’ 和 ‘opencv-python’包,但他们在生成TFRecords和图像、视频、Webcam验证脚本中被引用.)
 
-#### 2e. Configure PYTHONPATH environment variable
+#### 2e. 配置PYTHONPATH环境变量
 A PYTHONPATH variable must be created that points to the \models, \models\research, and \models\research\slim directories. Do this by issuing the following commands (from any directory):
 ```
 (tensorflow1) C:\> set PYTHONPATH=C:\tensorflow1\models;C:\tensorflow1\models\research;C:\tensorflow1\models\research\slim
 ```
 (Note: Every time the "tensorflow1" virtual environment is exited, the PYTHONPATH variable is reset and needs to be set up again. You can use "echo %PYTHONPATH% to see if it has been set or not.)
 
-#### 2f. Compile Protobufs and run setup.py
+#### 2f. 编译Protobufs，运行setup.py
 Next, compile the Protobuf files, which are used by TensorFlow to configure model and training parameters. Unfortunately, the short protoc compilation command posted on TensorFlow’s Object Detection API [installation page](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md) does not work on Windows. Every  .proto file in the \object_detection\protos directory must be called out individually by the command.
 
 In the Anaconda Command Prompt, change directories to the \models\research directory:
@@ -175,7 +176,7 @@ Finally, run the following commands from the C:\tensorflow1\models\research dire
 (tensorflow1) C:\tensorflow1\models\research> python setup.py install
 ```
 
-#### 2g. Test TensorFlow setup to verify it works
+#### 2g. 测试TensorFlow安装确保正常运行
 The TensorFlow Object Detection API is now all set up to use pre-trained models for object detection, or to train a new one. You can test it out and verify your installation is working by launching the object_detection_tutorial.ipynb script with Jupyter. From the \object_detection directory, issue this command:
 ```
 (tensorflow1) C:\tensorflow1\models\research\object_detection> jupyter notebook object_detection_tutorial.ipynb
