@@ -89,29 +89,30 @@ You can choose which model to train your objection detection classifier on. If y
 本教程中使用Faster-RCNN-Inception-V2模型. [点击下载.](http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz) 解压下载后的文件 faster_rcnn_inception_v2_coco_2018_01_28.tar.gz到faster_rcnn_inception_v2_coco_2018_01_28目录，拷贝到C:\tensorflow1\models\research\object_detection目录. (注意: 模型数据和版本以后会发生变化，但对本教程仍然有效.)
 
 #### 2c. 从GitHub上下载本教程的代码库
-Download the full repository located on this page (scroll to the top and click Clone or Download) and extract all the contents directly into the C:\tensorflow1\models\research\object_detection directory. (You can overwrite the existing "README.md" file.) This establishes a specific directory structure that will be used for the rest of the tutorial. 
+下载本页所在库的全部内容（移动到顶端点击Close or Download按钮），直接将所有内容解压到C:\tensorflow1\models\research\object_detection目录。（覆盖已存在的“README.md”文件。）这里创建的特殊目录结构将在本教程后续步骤中使用。 
 
-At this point, here is what your \object_detection folder should look like:
+至此，\object_detection目录如下图所示:
 
 <p align="center">
   <img src="doc/object_detection_directory.jpg">
 </p>
 
-This repository contains the images, annotation data, .csv files, and TFRecords needed to train a "Pinochle Deck" playing card detector. You can use these images and data to practice making your own Pinochle Card Detector. It also contains Python scripts that are used to generate the training data. It has scripts to test out the object detection classifier on images, videos, or a webcam feed. You can ignore the \doc folder and its files; they are just there to hold the images used for this readme.
+这个代码库包括图像、标记数据、.csv文件和训练纸牌分类器需要的TFRecords。可以使用这些图像和数据练习训练自己的纸牌检测器。同时包括生成训练数据的Python脚本。以及在图像、视频、Webcam上测试对象检测分类器的脚本。可以忽略\doc目录及其中的文件；这些文件只用于本readme页面。
 
-If you want to practice training your own "Pinochle Deck" card detector, you can leave all the files as they are. You can follow along with this tutorial to see how each of the files were generated, and then run the training. You will still need to generate the TFRecord files (train.record and test.record) as described in Step 4. 
+如果你要练习训练自己的纸牌分类器，可以保留全部文件。教程后面部分将看到如何生成这些文件、进行训练。还需要生成TFRecord文件（train.record和test.record）,见步骤4.
 
-You can also download the frozen inference graph for my trained Pinochle Deck card detector [from this Dropbox link](https://www.dropbox.com/s/va9ob6wcucusse1/inference_graph.zip?dl=0) and extract the contents to \object_detection\inference_graph. This inference graph will work "out of the box". You can test it after all the setup instructions in Step 2a - 2f have been completed by running the Object_detection_image.py (or video or webcam) script.
+也可以下载作者训练纸牌检测器的frozen inference graph [from this Dropbox link]
+(https://www.dropbox.com/s/va9ob6wcucusse1/inference_graph.zip?dl=0) 并解压到\object_detection\inference_graph. 这个逻辑图开箱即用。在配置指令步骤2a-2f完成后，就可以使用Object_detection_image.py (or video or webcam)脚本进行测试。
 
-If you want to train your own object detector, delete the following files (do not delete the folders):
-- All files in \object_detection\images\train and \object_detection\images\test
-- The “test_labels.csv” and “train_labels.csv” files in \object_detection\images
-- All files in \object_detection\training
--	All files in \object_detection\inference_graph
+如果要训练自己的对象检测器，删除如下目录中的文件（不删除目录）：
+- \object_detection\images\train 和 \object_detection\images\test 中的所有文件
+- \object_detection\images 目录下的“test_labels.csv” 和 “train_labels.csv”文件
+- \object_detection\training下的所有文件
+-	\object_detection\inference_graph下的所有文件
 
-Now, you are ready to start from scratch in training your own object detector. This tutorial will assume that all the files listed above were deleted, and will go on to explain how to generate the files for your own training dataset.
+现在，就可以从零开始训练自己的对象检测器了。本教程假设上面提到的所有文件都被删除，并讲解如何基于自己的训练数据生成这些文件。
 
-#### 2d. Set up new Anaconda virtual environment
+#### 2d. 设置新的Anaconda虚拟环境
 Next, we'll work on setting up a virtual environment in Anaconda for tensorflow-gpu. From the Start menu in Windows, search for the Anaconda Prompt utility, right click on it, and click “Run as Administrator”. If Windows asks you if you would like to allow it to make changes to your computer, click Yes.
 
 In the command terminal that pops up, create a new virtual environment called “tensorflow1” by issuing the following command:
