@@ -1,15 +1,15 @@
-# How To Train an Object Detection Classifier for Multiple Objects Using TensorFlow (GPU) on Windows 10
+# 如何在Windows10 Tensorflow（GPU）环境下训练多对象检测分类模型
 
-## Brief Summary
-*Last updated: 6/22/2019 with TensorFlow v1.13.1*
+## 小结
+*最近更新: 6/22/2019 with TensorFlow v1.13.1*
 
-*A Korean translation of this guide is located in the [translate folder](https://github.com/EdjeElectronics/TensorFlow-Object-Detection-API-Tutorial-Train-Multiple-Objects-Windows-10/blob/master/translate/README.md) (thanks @cocopambag!). If you would like to contribute a translation in another language, please feel free! You can add it as a pull request and I will merge it when I get the chance.*
+*本文的韩语翻译版本[translate folder](https://github.com/EdjeElectronics/TensorFlow-Object-Detection-API-Tutorial-Train-Multiple-Objects-Windows-10/blob/master/translate/README.md) (thanks @cocopambag!). 如果你打算翻译为其他语音，请随意！可以提交推送请求，作者将进行合并*
 
-This repository is a tutorial for how to use TensorFlow's Object Detection API to train an object detection classifier for multiple objects on Windows 10, 8, or 7. (It will also work on Linux-based OSes with some minor changes.) It was originally written using TensorFlow version 1.5, but will also work for newer versions of TensorFlow.
+本库是一个教程，讲解如何在Windows10、8或7下，使用Tensorflow的对象检测API来训练多对象检测的分类器。(稍作修改即可用于Linux系统.) 最初使用的是Tensorflow1.5版本，但也会兼容最新的TensorFlow版本.
 
-I also made a YouTube video that walks through this tutorial. Any discrepancies between the video and this written tutorial are due to updates required for using newer versions of TensorFlow. 
+YouTubo上同时也发布了一个视频. 视频和本文的任何差异都是由于更新TensorFlow新版本导致的. 
 
-**If there are differences between this written tutorial and the video, follow the written tutorial!**
+**如果视频和文档不一致，请遵从文档!**
 
 [![Link to my YouTube video!](https://raw.githubusercontent.com/EdjeElectronics/TensorFlow-Object-Detection-API-Tutorial-Train-Multiple-Objects-Windows-10/master/doc/YouTube%20video.jpg)](https://www.youtube.com/watch?v=Rgpfk6eYxJA)
 
