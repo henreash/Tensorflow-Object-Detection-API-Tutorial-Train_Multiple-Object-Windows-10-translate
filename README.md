@@ -51,18 +51,18 @@ TensorFlow-GPU可以使用PC机的显卡处理训练中的额外任务，因此�
 更多安装细节见[TensorFlow's website](https://www.tensorflow.org/install),保护如何在其他操作系统（如Linux）上进行安装的步骤。[object detection repository](https://github.com/tensorflow/models/tree/master/research/object_detection) 也有安装指导 [installation instructions](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md).
 
 ### 2. 配置TensorFlow目录和Anaconda虚拟环境
-The TensorFlow Object Detection API requires using the specific directory structure provided in its GitHub repository. It also requires several additional Python packages, specific additions to the PATH and PYTHONPATH variables, and a few extra setup commands to get everything set up to run or train an object detection model. 
+TensorFlow对象检测API需要使用由其GitHub库提供的特定的目录结构。同时还要安装几个Python包，并指定PATH和PYTHONPATH环境变量，以及几个额外的配置命令用于启动对象检测模型的运行和训练。
 
-This portion of the tutorial goes over the full set up required. It is fairly meticulous, but follow the instructions closely, because improper setup can cause unwieldy errors down the road.
+本部分教程将介绍所需的全部设置。有些过于细致，但是应该严格遵循说明，因为不适当的设置可能会导致将来出现难以处理的错误。
 
-#### 2a. Download TensorFlow Object Detection API repository from GitHub
-Create a folder directly in C: and name it “tensorflow1”. This working directory will contain the full TensorFlow object detection framework, as well as your training images, training data, trained classifier, configuration files, and everything else needed for the object detection classifier.
+#### 2a. 从GitHub库下载TensorFlow对象检测API
+在C盘创建目录tensorflow1。这个目录包含所有的TensorFlow对象检测框架、训练图像、训练数据、训练的分类器、配置文件，所有对象检测分类器需要的任何文件。
 
-Download the full TensorFlow object detection repository located at https://github.com/tensorflow/models by clicking the “Clone or Download” button and downloading the zip file. Open the downloaded zip file and extract the “models-master” folder directly into the C:\tensorflow1 directory you just created. Rename “models-master” to just “models”.
+在https://github.com/tensorflow/models下载全部TensorFlow对象检测库，点击“Clone or Download”按钮，下载zip文件。解压下载的文件，将models-master目录提取到C:\tensorflow1。将models-master目录重命名为models。
 
-**Note: The TensorFlow models repository's code (which contains the object detection API) is continuously updated by the developers. Sometimes they make changes that break functionality with old versions of TensorFlow. It is always best to use the latest version of TensorFlow and download the latest models repository. If you are not using the latest version, clone or download the commit for the version you are using as listed in the table below.**
+**注意: TensorFlow模型库的代码（包含对象检测API）不断由开发者更新。有时会导致旧版TensorFlow功能无法正常运行。最好一直使用最新版的TensorFlow并下载最新的模型库。如果您没有使用最新版本TensorFlow，请按照下表中列出的方式克隆或下载您正在使用的TensorFlow版本的模型。**
 
- If you are using an older version of TensorFlow, here is a table showing which GitHub commit of the repository you should use. I generated this by going to the release branches for the models repository and getting the commit before the last commit for the branch. (They remove the research folder as the last commit before they create the official version release.)
+如果您使用的是较老版本的TensorFlow，下表显示了应该使用哪个GitHub提交模型存储库。通过收集模型存储库的发布分支，并获取分支上最后一次提交内容，生成这个表。（在生成最终官方发布时将删除中间过程目录）
 
 | TensorFlow version | GitHub Models Repository Commit |
 |--------------------|---------------------------------|
@@ -75,16 +75,16 @@ Download the full TensorFlow object detection repository located at https://gith
 |TF v1.13            |https://github.com/tensorflow/models/tree/r1.13.0 |
 |Latest version      |https://github.com/tensorflow/models |
 
-This tutorial was originally done using TensorFlow v1.5 and this [GitHub commit](https://github.com/tensorflow/models/tree/079d67d9a0b3407e8d074a200780f3835413ef99) of the TensorFlow Object Detection API. If portions of this tutorial do not work, it may be necessary to install TensorFlow v1.5 and use this exact commit rather than the most up-to-date version.
+本教程最初使用的是TensorFlow1.5及其对应的对象检测API [GitHub commit](https://github.com/tensorflow/models/tree/079d67d9a0b3407e8d074a200780f3835413ef99).如果本教程的代码无法正常运行，有必要将最新版本Tensorflow及其对应的模型替换回1.5版本。
 
-#### 2b. Download the Faster-RCNN-Inception-V2-COCO model from TensorFlow's model zoo
-TensorFlow provides several object detection models (pre-trained classifiers with specific neural network architectures) in its [model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md). Some models (such as the SSD-MobileNet model) have an architecture that allows for faster detection but with less accuracy, while some models (such as the Faster-RCNN model) give slower detection but with more accuracy. I initially started with the SSD-MobileNet-V1 model, but it didn’t do a very good job identifying the cards in my images. I re-trained my detector on the Faster-RCNN-Inception-V2 model, and the detection worked considerably better, but with a noticeably slower speed.
+#### 2b. 在TensorFlow模型库中下载Faster-RCNN-Inception-V2-COCO模型
+TensorFlow提供了多个对象检测模型（使用特定神经网络结构预训练分类器）[model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md). 有些模型(如SSD-MobileNet模型)结构可以快速检测但精度较低，而有些模型（如Faster-RCNN）则检测慢精度高。最初使用的是SSD-MobileNet-V1模型，但在图像中检测纸牌的效果很差。在Faster-RCNN-Inception-V2模型上重新训练，效果非常好，但速度明显降低。
 
 <p align="center">
   <img src="doc/rcnn_vs_ssd.jpg">
 </p>
 
-You can choose which model to train your objection detection classifier on. If you are planning on using the object detector on a device with low computational power (such as a smart phone or Raspberry Pi), use the SDD-MobileNet model. If you will be running your detector on a decently powered laptop or desktop PC, use one of the RCNN models. 
+你可以选择一个模型来训练你的目标检测分类器。如果您计划在计算能力较低的设备(如智能手机或树莓派)上使用目标探测器，请使用SDD-MobileNet模型。如果您将在一台性能良好的笔记本电脑或台式电脑上运行您的检测器，请使用一个RCNN模型。
 
 本教程中使用Faster-RCNN-Inception-V2模型. [点击下载.](http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz) 解压下载后的文件 faster_rcnn_inception_v2_coco_2018_01_28.tar.gz到faster_rcnn_inception_v2_coco_2018_01_28目录，拷贝到C:\tensorflow1\models\research\object_detection目录. (注意: 模型数据和版本以后会发生变化，但对本教程仍然有效.)
 
@@ -148,11 +148,12 @@ C:\> activate tensorflow1
 (注意: Tensorflow不需要‘pandas’ 和 ‘opencv-python’包,但他们在生成TFRecords和图像、视频、Webcam验证脚本中被引用.)
 
 #### 2e. 配置PYTHONPATH环境变量
-A PYTHONPATH variable must be created that points to the \models, \models\research, and \models\research\slim directories. Do this by issuing the following commands (from any directory):
+创建PYTHONPATH环境变量，指向\models, \models\research, 和 \models\research\slim目录。可在任意目录运行如下命令行进行配置：
 ```
 (tensorflow1) C:\> set PYTHONPATH=C:\tensorflow1\models;C:\tensorflow1\models\research;C:\tensorflow1\models\research\slim
 ```
-(Note: Every time the "tensorflow1" virtual environment is exited, the PYTHONPATH variable is reset and needs to be set up again. You can use "echo %PYTHONPATH% to see if it has been set or not.)
+(注意：当退出tensorflow1虚拟环境，PYTHONPATH变量将被重置，需要再次进行设置。可以使用"echo %PYTHONPATH%检查是否进行配置.)
+***不用这么麻烦，直接配置环境变量即可
 
 #### 2f. 编译Protobufs，运行setup.py
 接下来，编译Protobuf文件，TensorFlow利用生成的代码配置模型和训练参数。不幸的是，TensorFlow对象检测API[installation page](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md)自带的编译命令protoc在windows上无法使用。\object_detection\protos目录下的所有.proto文件都必须单独使用命令行编译。
@@ -406,16 +407,16 @@ python export_inference_graph.py --input_type image_tensor --pipeline_config_pat
 
 如果发生错误，请检查附录：其中罗列了我遇到的运行对象检测分类器时遇到的问题。也可google这些错误。下面信息是Stack Exchange或TensorFlow GitHub网站上常见的问题。
 
-## Appendix: Common Errors
-It appears that the TensorFlow Object Detection API was developed on a Linux-based operating system, and most of the directions given by the documentation are for a Linux OS. Trying to get a Linux-developed software library to work on Windows can be challenging. There are many little snags that I ran in to while trying to set up tensorflow-gpu to train an object detection classifier on Windows 10. This Appendix is a list of errors I ran in to, and their resolutions.
+## 附录: 常见错误
+TensorFlow对象检测API似乎是在基于Linux的操作系统上开发的，文档中给出的大部分说明都是针对Linux操作系统的。试图让一个linux开发的软件库在Windows上工作是很有挑战性的。我在尝试设置tensorflow-gpu来训练Windows 10上的对象检测分类器时遇到了很多小问题。这个附录是我遇到的错误列表，以及它们的解决方案。
 
 #### 1. ModuleNotFoundError: No module named 'deployment' or No module named 'nets'
 
-This error occurs when you try to run object_detection_tutorial.ipynb or train.py and you don’t have the PATH and PYTHONPATH environment variables set up correctly. Exit the virtual environment by closing and re-opening the Anaconda Prompt window. Then, issue “activate tensorflow1” to re-enter the environment, and then issue the commands given in Step 2e. 
+运行object_detection_tutorial.ipynb时发生的错误。是因为没有正确地设置PATH和PYTHONPATH环境变量。配置环境变量后，重新打开Anaconda提示窗口退出虚拟环境。然后，录入“activate tensorflow1”重新进入环境
 
-You can use “echo %PATH%” and “echo %PYTHONPATH%” to check the environment variables and make sure they are set up correctly.
+可以使用“echo %PATH%” 和 “echo %PYTHONPATH%”检查环境变量是否正确设置。
 
-Also, make sure you have run these commands from the \models\research directory:
+同时，确保在目录\models\research中运行下面的命令:
 ```
 setup.py build
 setup.py install
@@ -427,32 +428,32 @@ setup.py install
 
 #### (or similar errors with other pb2 files)
 
-This occurs when the protobuf files (in this case, preprocessor.proto) have not been compiled. Re-run the protoc command given in Step 2f. Check the \object_detection\protos folder to make sure there is a name_pb2.py file for every name.proto file.
+当没有编译protobuf文件(在本例中是preprocessor.proto)时，就会发生这种情况。重新运行步骤2f中给出的protoc命令。检查\object_detection\protos文件夹，确保每个.proto文件都对应生成了一个name_pb2.py文件。
 
 #### 3. object_detection/protos/.proto: No such file or directory
 
-This occurs when you try to run the
+运行下面的命令时会发生的错误。
 ```
 “protoc object_detection/protos/*.proto --python_out=.”
 ```
-command given on the TensorFlow Object Detection API installation page. Sorry, it doesn’t work on Windows! Copy and paste the full command given in Step 2f instead. There’s probably a more graceful way to do it, but I don’t know what it is.
+译文：在TensorFlow对象检测API安装页面上给出的命令。对不起，它不能在Windows上工作!复制并粘贴步骤2f中给出的完整命令。也许有更好的方法，但我不知道是什么。
 
 #### 4. Unsuccessful TensorSliceReader constructor: Failed to get "file path" … The filename, directory name, or volume label syntax is incorrect.
   
-This error occurs when the filepaths in the training configuration file (faster_rcnn_inception_v2_pets.config or similar) have not been entered with backslashes instead of forward slashes. Open the .config file and make sure all file paths are given in the following format:
+当训练配置文件中的文件路径(faster_rcnn_inception_v2_pets)发生此错误时。没有使用反斜杠而不是正斜杠输入配置或类似内容。打开.config文件，并确保所有文件路径都以以下格式给出:
 ```
 “C:/path/to/model.file”
 ```
 
 #### 5. ValueError: Tried to convert 't' to a tensor and failed. Error: Argument must be a dense tensor: range(0, 3) - got shape [3], but wanted [].
 
-The issue is with models/research/object_detection/utils/learning_schedules.py Currently it is
+这个问题发生在 models/research/object_detection/utils/learning_schedules.py文件：
 ```
 rate_index = tf.reduce_max(tf.where(tf.greater_equal(global_step, boundaries),
                                       range(num_boundaries),
                                       [0] * num_boundaries))
 ```
-Wrap list() around the range() like this:
+将range()用list()包一下:
 
 ```
 rate_index = tf.reduce_max(tf.where(tf.greater_equal(global_step, boundaries),
@@ -463,15 +464,15 @@ rate_index = tf.reduce_max(tf.where(tf.greater_equal(global_step, boundaries),
 [Ref: Tensorflow Issue#3705](https://github.com/tensorflow/models/issues/3705#issuecomment-375563179)
 
 #### 6. ImportError: DLL load failed: The specified procedure could not be found.   (or other DLL-related errors)
-This error occurs because the CUDA and cuDNN versions you have installed are not compatible with the version of TensorFlow you are using. The easiest way to resolve this error is to use Anaconda's cudatoolkit package rather than manually installing CUDA and cuDNN. If you ran into these errors, try creating a new Anaconda virtual environment:
+发生此错误是因为您安装的CUDA和cuDNN版本与您正在使用的TensorFlow版本不兼容。解决这个错误最简单的方法是使用Anaconda的cudatoolkit包，而不是手动安装CUDA和cuDNN。如果你遇到这些错误，试着创建一个新的Anaconda虚拟环境:
 ```
 conda create -n tensorflow2 pip python=3.5
 ```
-Then, once inside the environment, install TensorFlow using CONDA rather than PIP:
+然后，进入环境，使用CONDA而不是PIP安装TensorFlow:
 ```
 conda install tensorflow-gpu
 ```
-Then restart this guide from Step 2 (but you can skip the part where you install TensorFlow in Step 2d).
+然后从步骤2重新执行本指南(但是您可以跳过步骤2d中安装TensorFlow的部分)。
 
 #### 7. In Step 2g, the Jupyter Notebook runs all the way through with no errors, but no pictures are displayed at the end.
-If you run the full Jupyter Notebook without getting any errors, but the labeled pictures still don't appear, try this: go in to object_detection/utils/visualization_utils.py and comment out the import statements around lines 29 and 30 that include matplotlib. Then, try re-running the Jupyter notebook. (The visualization_utils.py script changes quite a bit, so it might not be exactly line 29 and 30.)
+如果您运行完整的Jupyter Notebook代码而没有得到任何错误，但是标记的图片仍然没有出现，请尝试这样做:进入object_detection/utils/visualization_utils.py，并注释掉第29行和第30行左右的包含matplotlib的导入语句。然后，试着重新运行Jupyter Notebook。(visualization_utils.py脚本更改了很多，所以可能不是第29和30行。)
