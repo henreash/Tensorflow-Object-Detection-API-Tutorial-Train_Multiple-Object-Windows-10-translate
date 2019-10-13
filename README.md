@@ -44,13 +44,13 @@ TensorFlow-GPU可以使用PC机的显卡处理训练中的额外任务，因此�
 ### 1. 安装 Anaconda, CUDA, 和 cuDNN
 视频 [this YouTube video by Mark Jay](https://www.youtube.com/watch?v=RplXYjxgZbw), 讲述了Anaconda、CUDA、粗DNN的安装过程。TensorFlow的安装推迟到步骤2进行。视频中使用的TensorFlow-GPU1.4，这里下载最新的TensorFlow版本对应的CUDA 和 cuDNN，即CUDA8.0，而不是视频中的6.0（升级后下载TensorFlow-GPU==1.12.0、CUDA9.0）。[TensorFlow website](https://www.tensorflow.org/install/gpu) 描述了TensorFlow版本对应的CUDA和cuDNN版本. 
 
-If you are using an older version of TensorFlow, make sure you use the CUDA and cuDNN versions that are compatible with the TensorFlow version you are using. [Here](https://www.tensorflow.org/install/source#tested_build_configurations) is a table showing which version of TensorFlow requires which versions of CUDA and cuDNN.
+如果使用的是旧版TensorFlow，请确保下载与之兼容的CUDA和cuDNN。[Here](https://www.tensorflow.org/install/source#tested_build_configurations)罗列出了TensorFlow版本需要的CUDA和cuDNN.
 
-Be sure to install [Anaconda](https://www.anaconda.com/distribution/#download-section) as instructed in the video, because the Anaconda virtual environment will be used for the rest of this tutorial. (Note: The current version of Anaconda uses Python 3.7, which is not officially supported by TensorFlow. However, when creating an Anaconda virtual environment during Step 2d of this tutorial, we will tell it to use Python 3.5.)
+按视频要求安装[Anaconda](https://www.anaconda.com/distribution/#download-section),本教程后续部分将使用Anaconda的虚拟环境。(注意: 当前Anaconda版本使用的是Python3.7，还没有得到TensorFlow的官方支持。在步骤2创建Anaconda虚拟环境时，指定Python3.5)
 
-Visit [TensorFlow's website](https://www.tensorflow.org/install) for further installation details, including how to install it on other operating systems (like Linux). The [object detection repository](https://github.com/tensorflow/models/tree/master/research/object_detection) itself also has [installation instructions](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md).
+更多安装细节见[TensorFlow's website](https://www.tensorflow.org/install),保护如何在其他操作系统（如Linux）上进行安装的步骤。[object detection repository](https://github.com/tensorflow/models/tree/master/research/object_detection) 也有安装指导 [installation instructions](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md).
 
-### 2. Set up TensorFlow Directory and Anaconda Virtual Environment
+### 2. 配置TensorFlow目录和Anaconda虚拟环境
 The TensorFlow Object Detection API requires using the specific directory structure provided in its GitHub repository. It also requires several additional Python packages, specific additions to the PATH and PYTHONPATH variables, and a few extra setup commands to get everything set up to run or train an object detection model. 
 
 This portion of the tutorial goes over the full set up required. It is fairly meticulous, but follow the instructions closely, because improper setup can cause unwieldy errors down the road.
@@ -212,33 +212,32 @@ TensorFlow需要为每个对象准备几百张图像，才能训练出好的检�
 处理完所有图片后，将20%的图片移动到\object_detection\images\test目录，80%的图片移动到\object_detection\images\train目录。确保在\test、\train目录中图片种类均匀分布。
 
 #### 3b. 标记图片
-这个部分很有趣！收集到所有图片后，就需要在每张图片上标记出目标对象了。LabelImg是标记图像的强大工具，其GitHub上
-Here comes the fun part! With all the pictures gathered, it’s time to label the desired objects in every picture. LabelImg is a great tool for labeling images, and its GitHub page has very clear instructions on how to install and use it.
+这个部分很有趣！收集到所有图片后，就需要在每张图片上标记出目标对象了。LabelImg是标记图像的强大工具，GitHub上有详细的使用说明。
 
 [LabelImg GitHub link](https://github.com/tzutalin/labelImg)
 
 [LabelImg download link](https://www.dropbox.com/s/tq7zfrcwl44vxan/windows_v1.6.0.zip?dl=1)
 
-Download and install LabelImg, point it to your \images\train directory, and then draw a box around each object in each image. Repeat the process for all the images in the \images\test directory. This will take a while! 
+下载并安装LabelImg，启动后打开\images\train目录，在每张图片上框出目标对象。在\images\test目录重复同样的过程。这需要一定的时间。
 
 <p align="center">
   <img src="doc/labels.jpg">
 </p>
 
-LabelImg saves a .xml file containing the label data for each image. These .xml files will be used to generate TFRecords, which are one of the inputs to the TensorFlow trainer. Once you have labeled and saved each image, there will be one .xml file for each image in the \test and \train directories.
+LabelImg将图片中的标记数据保存到了.xml文件。使用这些.xml生成TFRecords，作为TensorFlow训练的一部分输入。在标记好图像数据后，\test和\train目录中的每个图像都有一个对应的.xml文件。
 
-### 4. Generate Training Data
-With the images labeled, it’s time to generate the TFRecords that serve as input data to the TensorFlow training model. This tutorial uses the xml_to_csv.py and generate_tfrecord.py scripts from [Dat Tran’s Raccoon Detector dataset](https://github.com/datitran/raccoon_dataset), with some slight modifications to work with our directory structure.
+### 4. 生成训练数据
+完成图像标记后，就可以生成用于TensorFlow训练模型的TRRecords输入数据了。本教程使用了xml_to_csv.py 和 generate_tfrecord.py 脚本，引用于[Dat Tran’s Raccoon Detector dataset](https://github.com/datitran/raccoon_dataset), 针对我们的目录结构做了稍许调整。
 
-First, the image .xml data will be used to create .csv files containing all the data for the train and test images. From the \object_detection folder, issue the following command in the Anaconda command prompt:
+首先，利用图像的.xml文件创建包含所有训练和测试图像信息的.csv文件。在\object_detection 目录, 在Anaconda命令行工具中执行如下命令:
 ```
 (tensorflow1) C:\tensorflow1\models\research\object_detection> python xml_to_csv.py
 ```
-This creates a train_labels.csv and test_labels.csv file in the \object_detection\images folder. 
+将在目录\object_detection\images下创建train_labels.csv 和 test_labels.csv 文件. 
 
-Next, open the generate_tfrecord.py file in a text editor. Replace the label map starting at line 31 with your own label map, where each object is assigned an ID number. This same number assignment will be used when configuring the labelmap.pbtxt file in Step 5b. 
+接下来，在记事本中打开generate_tfrecord.py文件.在第31行将标记映射替换为你自己的标记映射，每个对象指定一个ID数字。在步骤5b中，将使用同样的ID数字配置labelmap.pbtxt文件。
 
-For example, say you are training a classifier to detect basketballs, shirts, and shoes. You will replace the following code in generate_tfrecord.py:
+例如，如果要训练篮球、衬衫、球鞋，需要调整generate_tfrecord.py:
 ```
 # TO-DO replace this with label map
 def class_text_to_int(row_label):
@@ -257,7 +256,7 @@ def class_text_to_int(row_label):
     else:
         None
 ```
-With this:
+为:
 ```
 # TO-DO replace this with label map
 def class_text_to_int(row_label):
@@ -270,18 +269,19 @@ def class_text_to_int(row_label):
     else:
         None
 ```
-Then, generate the TFRecord files by issuing these commands from the \object_detection folder:
+然后，在\object_detection目录下执行如下命令生成TFRecord文件:
 ```
 python generate_tfrecord.py --csv_input=images\train_labels.csv --image_dir=images\train --output_path=train.record
 python generate_tfrecord.py --csv_input=images\test_labels.csv --image_dir=images\test --output_path=test.record
 ```
-These generate a train.record and a test.record file in \object_detection. These will be used to train the new object detection classifier.
+在\object_detection目录下生成train.record和test.record文件，用于训练新的对象检测分类器。
 
-### 5. Create Label Map and Configure Training
-The last thing to do before training is to create a label map and edit the training configuration file.
+### 5. 创建标签映射和训练配置
+在开始训练之前，最后要做的事情是创建标签映射，修改训练配置文件。
 
-#### 5a. Label map
-The label map tells the trainer what each object is by defining a mapping of class names to class ID numbers. Use a text editor to create a new file and save it as labelmap.pbtxt in the C:\tensorflow1\models\research\object_detection\training folder. (Make sure the file type is .pbtxt, not .txt !) In the text editor, copy or type in the label map in the format below (the example below is the label map for my Pinochle Deck Card Detector):
+#### 5a. 标签映射
+标签映射告诉训练器我们关注的对象类型名称及其对应的ID编号。使用记事本创建新文件，保存为C:\tensorflow1\models\research\object_detection\training目录下的labelmap.pbtxt（注意后缀是.pbtxt而不是.txt）。在记事本中， 拷贝或按如下格式（纸牌识别器的标签 映射）录入标签映射。
+:
 ```
 item {
   id: 1
@@ -313,7 +313,7 @@ item {
   name: 'ace'
 }
 ```
-The label map ID numbers should be the same as what is defined in the generate_tfrecord.py file. For the basketball, shirt, and shoe detector example mentioned in Step 4, the labelmap.pbtxt file will look like:
+标签映射的ID编号必须与generate_tfrecord.py文件中的定义保持一致。对于篮球、T恤、球鞋的例子，labelmap.pbtxt应如下所示：
 ```
 item {
   id: 1
@@ -331,80 +331,80 @@ item {
 }
 ```
 
-#### 5b. Configure training
-Finally, the object detection training pipeline must be configured. It defines which model and what parameters will be used for training. This is the last step before running training!
+#### 5b. 配置训练信息
+最后，要配置目标检测训练管道。启动定义了训练使用的模型和参数。这是训练前的最后一个步骤。
 
-Navigate to C:\tensorflow1\models\research\object_detection\samples\configs and copy the faster_rcnn_inception_v2_pets.config file into the \object_detection\training directory. Then, open the file with a text editor. There are several changes to make to the .config file, mainly changing the number of classes and examples, and adding the file paths to the training data.
+移动到C:\tensorflow1\models\research\object_detection\samples\configs目录，将faster_rcnn_inception_v2_pets.config文件拷贝到\object_detection\training目录。使用记事本打开这个文件，需要对这个.config文件做几处修改，主要修改类别和样本的数量，以及训练数据的文件路径。
 
-Make the following changes to the faster_rcnn_inception_v2_pets.config file. Note: The paths must be entered with single forward slashes (NOT backslashes), or TensorFlow will give a file path error when trying to train the model! Also, the paths must be in double quotation marks ( " ), not single quotation marks ( ' ).
+对faster_rcnn_inception_v2_pets.config文件做如下几处修改。注意：路径必须使用斜线（linux的分隔符）而不是反斜线，否则训练模型时TensorFlow将抛出路径错误信息！同样路径必须置于双引号内，而不是单引号。
 
-- Line 9. Change num_classes to the number of different objects you want the classifier to detect. For the above basketball, shirt, and shoe detector, it would be num_classes : 3 .
-- Line 106. Change fine_tune_checkpoint to:
+- 第九9行. 修改num_classes为训练分类器中的对象类型数量. 上面篮球、T恤、球鞋的例子中，需要将num_classes指定为3.
+- 第106行. 修改 fine_tune_checkpoint 为:
   - fine_tune_checkpoint : "C:/tensorflow1/models/research/object_detection/faster_rcnn_inception_v2_coco_2018_01_28/model.ckpt"
 
-- Lines 123 and 125. In the train_input_reader section, change input_path and label_map_path to:
+- 第 123 和 125行. 在train_input_reader 节, 修改 input_path 和 label_map_path :
   - input_path : "C:/tensorflow1/models/research/object_detection/train.record"
   - label_map_path: "C:/tensorflow1/models/research/object_detection/training/labelmap.pbtxt"
 
-- Line 130. Change num_examples to the number of images you have in the \images\test directory.
+- 第 130行. 修改 num_examples为\images\test目录下的图像数量.
 
-- Lines 135 and 137. In the eval_input_reader section, change input_path and label_map_path to:
+- 第 135 和 137行. 在eval_input_reader小结,修改input_path 和 label_map_path:
   - input_path : "C:/tensorflow1/models/research/object_detection/test.record"
   - label_map_path: "C:/tensorflow1/models/research/object_detection/training/labelmap.pbtxt"
 
-Save the file after the changes have been made. That’s it! The training job is all configured and ready to go!
+修改后保存文件.就这样！训练的配置完成！
 
-### 6. Run the Training
+### 6. 执行训练
 **UPDATE 9/26/18:** 
-*As of version 1.9, TensorFlow has deprecated the "train.py" file and replaced it with "model_main.py" file. I haven't been able to get model_main.py to work correctly yet (I run in to errors related to pycocotools). Fortunately, the train.py file is still available in the /object_detection/legacy folder. Simply move train.py from /object_detection/legacy into the /object_detection folder and then continue following the steps below.*
+*在1.9版本, TensorFlow废弃了train.py，采用model_main.py文件。还无法使model_main.py文件正常运行（提示相关pycocotools错误）。幸运的是，可以在/object_detection/legacy目录中找到train.py文件。将train.py文件拷贝到/object_detection目录，继续下述过程。*
 
-Here we go! From the \object_detection directory, issue the following command to begin training:
+现在继续！在\object_detection目录,执行如下命令启动训练:
 ```
 python train.py --logtostderr --train_dir=training/ --pipeline_config_path=training/faster_rcnn_inception_v2_pets.config
 ```
-If everything has been set up correctly, TensorFlow will initialize the training. The initialization can take up to 30 seconds before the actual training begins. When training begins, it will look like this:
+如果配置正确，TensorFlow将初始化训练过程。初始化需要约30秒，而后开始训练。开始训练输出如下图：
 
 <p align="center">
   <img src="doc/training.jpg">
 </p>
 
-Each step of training reports the loss. It will start high and get lower and lower as training progresses. For my training on the Faster-RCNN-Inception-V2 model, it started at about 3.0 and quickly dropped below 0.8. I recommend allowing your model to train until the loss consistently drops below 0.05, which will take about 40,000 steps, or about 2 hours (depending on how powerful your CPU and GPU are). Note: The loss numbers will be different if a different model is used. MobileNet-SSD starts with a loss of about 20, and should be trained until the loss is consistently under 2.
+每个训练步骤都会打印出loss。初始值很高，随着训练过程逐步降低。在使用Faster-RCNN-Inception-V2模型的训练中，这个值从3.0快速降到0.8。推荐将模型训练到loss低于0.05，需要大概4万步，约2个小时（依赖于CPU和GPU的性能）。注意：不同的模型loss的值会有差异。MobileNet-SSD模型loss起始值为20，需要将loss训练到低于2。
 
-You can view the progress of the training job by using TensorBoard. To do this, open a new instance of Anaconda Prompt, activate the tensorflow1 virtual environment, change to the C:\tensorflow1\models\research\object_detection directory, and issue the following command:
+可以使用TensorBoard查看训练过程。打开Anaconda提示符工具，激活tensorflow1虚拟环境，导航到C:\tensorflow1\models\research\object_detection目录，输入如下命令：
 ```
 (tensorflow1) C:\tensorflow1\models\research\object_detection>tensorboard --logdir=training
 ```
-This will create a webpage on your local machine at YourPCName:6006, which can be viewed through a web browser. The TensorBoard page provides information and graphs that show how the training is progressing. One important graph is the Loss graph, which shows the overall loss of the classifier over time.
+将创建一个本机的web页面，地址为YourPCName:6006，使用浏览器打开。TensorBoard页面提供了训练过程的信息和图示。最重要的是loss图表，其中显示了分类器训练过程中全部的loss值。
 
 <p align="center">
   <img src="doc/loss_graph.JPG">
 </p>
 
-The training routine periodically saves checkpoints about every five minutes. You can terminate the training by pressing Ctrl+C while in the command prompt window. I typically wait until just after a checkpoint has been saved to terminate the training. You can terminate training and start it later, and it will restart from the last saved checkpoint. The checkpoint at the highest number of steps will be used to generate the frozen inference graph.
+训练例程每5分钟保存一次checkpoints。在命令行提示符窗口，按下Ctrl+C结束训练。应该在checkpoint保存后结束训练。可以在终止训练，随后在继续训练，将从最近保存的checkpoint恢复训练过程。最高步数的checkpoint将用于生成冻结图（frozen inference graph）。
 
-### 7. Export Inference Graph
-Now that training is complete, the last step is to generate the frozen inference graph (.pb file). From the \object_detection folder, issue the following command, where “XXXX” in “model.ckpt-XXXX” should be replaced with the highest-numbered .ckpt file in the training folder:
+### 7. 导出推理图
+现在训练完成，最后步骤就是生成冻结图（.pb文件）。在\object_detection目录，执行如下命令，model.ckpt-XXXX中的XXXX要替换为training目录下.ckpt文件的最大编号：
 ```
 python export_inference_graph.py --input_type image_tensor --pipeline_config_path training/faster_rcnn_inception_v2_pets.config --trained_checkpoint_prefix training/model.ckpt-XXXX --output_directory inference_graph
 ```
-This creates a frozen_inference_graph.pb file in the \object_detection\inference_graph folder. The .pb file contains the object detection classifier.
+在\object_detection\inference_graph目录生成了一个frozen_inference_graph.pb文件。这个.pb文件包含了对象检测分类器。
 
-### 8. Use Your Newly Trained Object Detection Classifier!
-The object detection classifier is all ready to go! I’ve written Python scripts to test it out on an image, video, or webcam feed.
+### 8. 使用新训练出来的对象检测分类器!
+对象检测分类器已经就位！我们已经编写了Python脚本在图像、视频、Webcam上测试模型。
 
-Before running the Python scripts, you need to modify the NUM_CLASSES variable in the script to equal the number of classes you want to detect. (For my Pinochle Card Detector, there are six cards I want to detect, so NUM_CLASSES = 6.)
+在运行Python脚本之前，需要修改脚本中的NUM_CLASSES变量，置为你要检测的类型数量（对于纸牌范例，我们要检测6张纸牌，所以NUM_CLASSES = 6）。
 
-To test your object detector, move a picture of the object or objects into the \object_detection folder, and change the IMAGE_NAME variable in the Object_detection_image.py to match the file name of the picture. Alternatively, you can use a video of the objects (using Object_detection_video.py), or just plug in a USB webcam and point it at the objects (using Object_detection_webcam.py).
+要测试对象检测器，将含有一个或多个目标对象的图像移到\object_detection目录，修改Object_detection_image.py文件中的IMAGE_NAME变量为图片的文件名。也可以使用视频（运行Object_detection_video.py脚本），或使用Object_detection_webcam.py脚本检测USB webcam中的对象。
 
-To run any of the scripts, type “idle” in the Anaconda Command Prompt (with the “tensorflow1” virtual environment activated) and press ENTER. This will open IDLE, and from there, you can open any of the scripts and run them.
+要运行脚本，在Anacoda命令行提示符下（激活tensorflow1虚拟环境）输入idle回车。打开IDLE，在其中打开脚本后运行。
 
-If everything is working properly, the object detector will initialize for about 10 seconds and then display a window showing any objects it’s detected in the image!
+如果运行正常，对象检测器初始化大约用10秒，而后显示图像检测结果窗口！
 
 <p align="center">
   <img src="doc/detector2.jpg">
 </p>
 
-If you encounter errors, please check out the Appendix: it has a list of errors that I ran in to while setting up my object detection classifier. You can also trying Googling the error. There is usually useful information on Stack Exchange or in TensorFlow’s Issues on GitHub.
+如果发生错误，请检查附录：其中罗列了我遇到的运行对象检测分类器时遇到的问题。也可google这些错误。下面信息是Stack Exchange或TensorFlow GitHub网站上常见的问题。
 
 ## Appendix: Common Errors
 It appears that the TensorFlow Object Detection API was developed on a Linux-based operating system, and most of the directions given by the documentation are for a Linux OS. Trying to get a Linux-developed software library to work on Windows can be challenging. There are many little snags that I ran in to while trying to set up tensorflow-gpu to train an object detection classifier on Windows 10. This Appendix is a list of errors I ran in to, and their resolutions.
