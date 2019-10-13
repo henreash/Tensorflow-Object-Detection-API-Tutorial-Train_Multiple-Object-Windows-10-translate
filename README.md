@@ -32,17 +32,17 @@ YouTubo上同时也发布了一个视频. 视频和本文的任何差异都是�
 </p>
 
 ## 简介
-The purpose of this tutorial is to explain how to train your own convolutional neural network object detection classifier for multiple objects, starting from scratch. At the end of this tutorial, you will have a program that can identify and draw boxes around specific objects in pictures, videos, or in a webcam feed.
+本教程的目的是阐述如何训练卷积神经网络的多对象检测分类器。在本教程最后，将提供一个程序，在图像、视频或Webcam上识别对象并绘制矩形框进行标注对象。
 
-There are several good tutorials available for how to use TensorFlow’s Object Detection API to train a classifier for a single object. However, these usually assume you are using a Linux operating system. If you’re like me, you might be a little hesitant to install Linux on your high-powered gaming PC that has the sweet graphics card you’re using to train a classifier. The Object Detection API seems to have been developed on a Linux-based OS. To set up TensorFlow to train a model on Windows, there are several workarounds that need to be used in place of commands that would work fine on Linux. Also, this tutorial provides instructions for training a classifier that can detect multiple objects, not just one.
+有很多教程讲述如何使用TensorFlow对象检测API训练单对象分类器。然而，大多都是在Linux系统下进行操作的。如果只是为了训练分类器就要在高显卡配置的游戏PC上安装Linux，还是很不情愿的。对象检测API是在Linux系统上开发的。要在Windows上安装TensorFlow训练模型，有几个额外的工作需要处理，解决几个只能在Linux下运行的命令行问题。同时，本教程提供一个多分类对象检测器，而不是一个分类。
 
-The tutorial is written for Windows 10, and it will also work for Windows 7 and 8. The general procedure can also be used for Linux operating systems, but file paths and package installation commands will need to change accordingly. I used TensorFlow-GPU v1.5 while writing the initial version of this tutorial, but it will likely work for future versions of TensorFlow.
+本教程基于Windows10,同时也兼任Windows7和8。这些过程也适用于Linux系统，但需相应的调整文件路径和包安装命令。在写本教程的时候使用TensorFlow-GPU1.5（现在已经升级为1.12.0），但会对新版本的TensorFlow兼容。
 
-TensorFlow-GPU allows your PC to use the video card to provide extra processing power while training, so it will be used for this tutorial. In my experience, using TensorFlow-GPU instead of regular TensorFlow reduces training time by a factor of about 8 (3 hours to train instead of 24 hours). The CPU-only version of TensorFlow can also be used for this tutorial, but it will take longer. If you use CPU-only TensorFlow, you do not need to install CUDA and cuDNN in Step 1. 
+TensorFlow-GPU可以使用PC机的显卡处理训练中的额外任务，因此本教程将采用这个版本。测试发现，使用TensorFlow-GPU替代通用的TensorFlow，可以减少8倍的训练时间（从24小时缩减到3小时）。本教程也可以使用CPU版本的TensorFlow，但运行时间会很长。如果你要采用CPU版本的TensorFlow，可以忽略步骤1的安装CUDA和cuDNN。
 
-## Steps
-### 1. Install Anaconda, CUDA, and cuDNN
-Follow [this YouTube video by Mark Jay](https://www.youtube.com/watch?v=RplXYjxgZbw), which shows the process for installing Anaconda, CUDA, and cuDNN. You do not need to actually install TensorFlow as shown in the video, because we will do that later in Step 2. The video is made for TensorFlow-GPU v1.4, so download and install the CUDA and cuDNN versions for the latest TensorFlow version, rather than CUDA v8.0 and cuDNN v6.0 as instructed in the video. The [TensorFlow website](https://www.tensorflow.org/install/gpu) indicates which versions of CUDA and cuDNN are needed for the latest version of TensorFlow. 
+## 步骤
+### 1. 安装 Anaconda, CUDA, 和 cuDNN
+视频 [this YouTube video by Mark Jay](https://www.youtube.com/watch?v=RplXYjxgZbw), 讲述了Anaconda、CUDA、粗DNN的安装过程。TensorFlow的安装推迟到步骤2进行。视频中使用的TensorFlow-GPU1.4，这里下载最新的TensorFlow版本对应的CUDA 和 cuDNN，即CUDA8.0，而不是视频中的6.0（升级后下载TensorFlow-GPU==1.12.0、CUDA9.0）。[TensorFlow website](https://www.tensorflow.org/install/gpu) 描述了TensorFlow版本对应的CUDA和粗DNN版本. 
 
 If you are using an older version of TensorFlow, make sure you use the CUDA and cuDNN versions that are compatible with the TensorFlow version you are using. [Here](https://www.tensorflow.org/install/source#tested_build_configurations) is a table showing which version of TensorFlow requires which versions of CUDA and cuDNN.
 
